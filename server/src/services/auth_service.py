@@ -36,10 +36,17 @@ class AuthService:
             new_user.model_dump()
         )
 
+        token = create_access_token({
+            "user_id": str(result.inserted_id),
+            "email": user_data.email
+        })
+
         return {
             "success": True,
             "message": "User registered successfully",
-            "user_id": str(result.inserted_id)
+            "user_id": str(result.inserted_id),
+            "access_token": token,
+            "token_type": "bearer"
         }
 
     @staticmethod
