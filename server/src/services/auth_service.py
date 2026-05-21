@@ -3,6 +3,7 @@ from datetime import datetime
 from src.db.mongo import MongoDB
 from src.models.user import UserModel
 from src.core.security import ( hash_password ,verify_password ,create_access_token)
+from src.services.policies import DEFAULT_CREDITS
 
 # defining the class to handle all authentication related operations
 class AuthService:
@@ -29,6 +30,8 @@ class AuthService:
             email=user_data.email,
             username=user_data.username,
             hashed_password=hashed_password,
+            credits=DEFAULT_CREDITS,
+            credits_last_reset_at=datetime.utcnow(),
             created_at=datetime.utcnow()
         )
 

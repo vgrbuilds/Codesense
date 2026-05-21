@@ -15,4 +15,5 @@ class ProjectResponseSchema(BaseModel):
     description: str | None = None
     owner_id: str
     repository_url: str
+    repository_id: str | None = None
     created_at: datetime

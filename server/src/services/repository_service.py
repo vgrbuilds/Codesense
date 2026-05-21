@@ -16,6 +16,7 @@ class RepositoryService:
             assets=repository_data.assets,
             summary=repository_data.summary,
             documentation=repository_data.documentation,
+            design=repository_data.design,
             created_at=datetime.utcnow(),
         )
 

@@ -1,8 +1,10 @@
 # importing all the necessary modules
+from datetime import datetime
 from src.db.mongo import MongoDB
 from src.schemas.user import UserUpdateSchema, UserResponseSchema
 from src.core.security import hash_password
 from bson import ObjectId  # Use lowercase 'd'
+from src.services.policies import DEFAULT_CREDITS, should_reset_credits
 
 class UserService:
     @staticmethod
@@ -17,6 +19,15 @@ class UserService:
 
         if not user:
             return {"success": False, "message": "User not found"}
+
+        now = datetime.utcnow()
+        if should_reset_credits(user.get("credits_last_reset_at"), now):
+            await users_collection.update_one(
+                {"_id": user["_id"]},
+                {"$set": {"credits": DEFAULT_CREDITS, "credits_last_reset_at": now}},
+            )
+            user["credits"] = DEFAULT_CREDITS
+            user["credits_last_reset_at"] = now
         
         # Prepare data for UserResponseSchema: map _id to id
         user["id"] = str(user.pop("_id"))

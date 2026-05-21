@@ -10,4 +10,5 @@ class RepositoryModel(BaseModel):
     assets: list = Field(default_factory=list)
     summary: str | None = None
     documentation: list = Field(default_factory=list)#url for cloudinary files stored as documents
+    design: str | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)

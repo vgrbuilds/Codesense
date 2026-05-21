@@ -11,4 +11,5 @@ class ProjectModel(BaseModel):
     description: Optional[str] = None
     owner_id: str
     repository_url: str
+    repository_id: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)

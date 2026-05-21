@@ -11,8 +11,8 @@ class MongoDB:
     #defining the class method to connect to the MongoDB database
     @classmethod
     async def connect(cls):
-        cls.cleint = AsyncIOMotorClient(config.mongo_uri)
-        cls.database = cls.cleint[config.database_name]
+        cls.client = AsyncIOMotorClient(config.mongo_uri)
+        cls.database = cls.client[config.database_name]
         print("The server app is successfully connected to the MongoDB database")
     #defining the class method to disconnect from the MongoDB database
     @classmethod
