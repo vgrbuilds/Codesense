@@ -9,6 +9,9 @@ ENV PYTHONPATH=/app
 # setting the app working directory
 WORKDIR /app
 
+# installing system dependencies required by python packages
+RUN apt-get update && apt-get install -y --no-install-recommends git && rm -rf /var/lib/apt/lists/*
+
 # installing uv package manager
 RUN pip install --no-cache-dir uv
 
