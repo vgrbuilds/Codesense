@@ -17,6 +17,10 @@ The server exposes a REST API built with FastAPI and MongoDB. Authentication use
 
 /projects
     POST: create a new project for the authenticated user.
+    Business rules:
+        - 2 credits are consumed per project creation.
+        - credits reset to 10 every 30 days.
+        - repository ingestion is reused when URL already exists (no re-scrape).
     GET: list projects owned by the authenticated user.
 
 /projects/{project_id}
@@ -29,6 +33,11 @@ The server exposes a REST API built with FastAPI and MongoDB. Authentication use
 /repositories/{repository_id}
     GET: retrieve a repository by ID.
 
+/repositories/ingest
+    POST: ingest a repository by `url` (or `source_path`) and persist chunks + artifacts.
+    Auth: not required.
+    Response includes: `repository_id`, `files_scanned`, `chunks_created`, `assets_uploaded`, `documents_uploaded`.
+
 /chunks
     POST: create a new code chunk with embedding and repository reference.
 
@@ -40,6 +49,13 @@ The server exposes a REST API built with FastAPI and MongoDB. Authentication use
 
 /messages
     POST: create a chat/message record for the authenticated user.
+    POST /messages/query: run RAG query against ingested repository chunks.
+
+/health
+    GET: liveness check.
+
+/ready
+    GET: readiness check (includes Mongo ping).
 
 ## DB Design
 
@@ -72,6 +88,7 @@ repositories {
     assets,
     summary,
     documentation,
+    design,
     created_at,
 }
 
@@ -114,3 +131,27 @@ Optional / additional variables:
 
 - `PORT`
 - `GEMINI_KEY`
+- `GITHUB_TOKEN`
+- `CLOUDINARY_CLOUD_NAME`
+- `CLOUDINARY_API_KEY`
+- `CLOUDINARY_API_SECRET`
+
+## Ingestion Notes
+
+`POST /repositories/ingest` accepts:
+
+{
+    "url": "https://github.com/owner/repo",
+    "source_path": "",
+    "assets": [],
+    "summary": null,
+    "documentation": [],
+    "design": null
+}
+
+Flow:
+1. Repository is fetched from `url` when `source_path` is empty.
+2. Supported text/code files are split into line-driven chunks.
+3. Embeddings are generated for each chunk and stored in `chunks`.
+4. Summary/setup/architecture/design text artifacts are generated and stored in `repositories`.
+5. Images and documents discovered in the repo are uploaded to Cloudinary and saved as URLs in `assets`/`documentation`.

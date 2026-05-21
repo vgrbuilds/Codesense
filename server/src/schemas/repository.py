@@ -9,14 +9,16 @@ class RepositoryCreateSchema(BaseModel):
     assets: list[Any] = Field(default_factory=list)
     summary: str | None = None
     documentation: list[Any] = Field(default_factory=list)
+    design: str | None = None
 
 
 class RepositoryIngestSchema(BaseModel):
-    source_path: str
+    source_path: str = ""
     url: str
     assets: list[Any] = Field(default_factory=list)
     summary: str | None = None
     documentation: list[Any] = Field(default_factory=list)
+    design: str | None = None
 
 
 class RepositoryResponseSchema(BaseModel):
@@ -25,4 +27,5 @@ class RepositoryResponseSchema(BaseModel):
     assets: list[Any]
     summary: str | None = None
     documentation: list[Any]
+    design: str | None = None
     created_at: datetime

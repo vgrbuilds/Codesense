@@ -19,3 +19,10 @@ class MessageResponseSchema(BaseModel):
     content: str
     references: list[Any]
     created_at: datetime
+
+
+class MessageQuerySchema(BaseModel):
+    conversation_id: str
+    repository_id: str
+    question: str
+    top_k: int = 5

@@ -1,4 +1,5 @@
 # importing all the necessary modules
+from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 
 # schema for user registration
@@ -19,6 +20,7 @@ class UserResponseSchema(BaseModel):
     username: str
     avatar: str | None = None
     credits: int
+    credits_last_reset_at: datetime | None = None
 
 # schema for updating the user details
 class UserUpdateSchema(BaseModel):
