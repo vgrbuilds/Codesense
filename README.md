@@ -9,10 +9,12 @@ Codesense is a SAAS product developed to assist open source contributors , new d
 3. Easy to use interface
 4. Easy setup and history tracking of conversations.
 5. Explain this file feature
+6. Auto generated diagrams or resources that help understand the codebase better.
 
 ## Tech stack
 
 Client application: React JS , Tailwind CSS , Ant Design
-Server application: FastAPI ,
+Server application: FastAPI , Langchain
 Database: MongoDB , MongoDB vector store
-Containerization and deployment: Docker , render
+Containerization and deployment: Docker , render , vercel
+
