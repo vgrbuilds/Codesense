@@ -20,7 +20,7 @@ class ChatService:
             google_api_key=settings.GEMINI_API_KEY
         )
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004",
+            model="gemini-embedding-2",
             google_api_key=settings.GEMINI_API_KEY
         )
 
@@ -88,8 +88,10 @@ class ChatService:
         history_text = "\n".join(history)
 
         # 3 - query vector store filtered by repo_id
+        from app.core.db_connect import mongodb
+        sync_chunks = mongodb.get_sync_database()["chunks"]
         vector_store = MongoDBAtlasVectorSearch(
-            collection=self.chunks,
+            collection=sync_chunks,
             embedding=self.embeddings,
             index_name="vector_index",
         )
@@ -99,6 +101,8 @@ class ChatService:
             pre_filter={"repo_id": {"$eq": repo_id}},
         )
         context = "\n\n".join([c.page_content for c in relevant_chunks])
+        if not context.strip():
+            context = "No relevant repository context was found for this query."
 
         # 4 - build prompt with context + history
         prompt = f"""
@@ -117,12 +121,15 @@ Answer clearly and concisely. If the answer is not in the context, say so.
 
         # 5 - get response from gemini
         response = self.llm.invoke(prompt)
+        answer_text = getattr(response, "content", None)
+        if answer_text is None:
+            answer_text = str(response)
 
         # 6 - save assistant message
         assistant_message = Message(
             conversation_id=conversation_id,
             role="assistant",
-            content=response.content,
+            content=answer_text,
             created_at=datetime.utcnow(),
         )
         result = await self.messages.insert_one(

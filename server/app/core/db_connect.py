@@ -1,5 +1,6 @@
 #importing all the needed modules
 from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo import MongoClient
 from app.core.config import settings
 
 # creating the database client class
@@ -10,6 +11,8 @@ class DatabaseClient:
         try:
             self.client = AsyncIOMotorClient(settings.MONGO_URI)
             self.database = self.client[settings.DATABASE_NAME]
+            self.sync_client = MongoClient(settings.MONGO_URI)
+            self.sync_database = self.sync_client[settings.DATABASE_NAME]
             print("MongoDB client initialized successfully.")
         
         except Exception as error:
@@ -28,6 +31,10 @@ class DatabaseClient:
     # function to retrieve the database
     def get_database(self):
         return self.database
+
+    # function to retrieve the synchronous database
+    def get_sync_database(self):
+        return self.sync_database
     
     # function to close the database connection
     async def close_database_connection(self):
@@ -37,9 +44,10 @@ class DatabaseClient:
         except Exception as error:
             print(f"Error closing MongoDB connection: {error}")
             raise
-    #function to get a specific collection from the database
-    def get_collection(name: str):
-        return mongodb.get_database()[name]
+
+    # function to get a specific collection from the database
+    def get_collection(self, name: str):
+        return self.get_database()[name]
 
 
 # creating the database client instance
