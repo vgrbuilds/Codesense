@@ -57,3 +57,10 @@ class ProjectService:
         if not project:
             raise ValueError(f"Project {project_id} not found")
         return self._serialize(project)
+
+    # service to get all projects for a user
+    async def get_user_projects(self, user_id: str) -> list[ProjectResponseSchema]:
+        projects = []
+        async for project in self.collection.find({"user_id": user_id}):
+            projects.append(self._serialize(project))
+        return projects

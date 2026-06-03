@@ -29,6 +29,13 @@ class ProjectAPI:
         except ValueError as e:
             raise HTTPException(status_code=404, detail=str(e))
 
+    # api to get all projects for a user
+    async def get_user_projects(self, user_id: str) -> list[ProjectResponseSchema]:
+        try:
+            return await self.service.get_user_projects(user_id)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
 
 # ── routes ────────────────────────────────────────────────
 project_api = ProjectAPI()
@@ -42,3 +49,21 @@ async def create_project(data: CreateProjectSchema, user_id: str):
 @router.get("/{project_id}", response_model=ProjectResponseSchema)
 async def get_project(project_id: str):
     return await project_api.get_project(project_id)
+
+
+@router.get("/user/{user_id}", response_model=list[ProjectResponseSchema])
+async def get_user_projects(user_id: str):
+    return await project_api.get_user_projects(user_id)
+
+
+from app.modules.repository.repository_schema import RepositoryResponseSchema
+
+@router.get("/{project_id}/repository", response_model=RepositoryResponseSchema)
+async def get_project_repository(project_id: str):
+    try:
+        project = await project_api.service.get_project(project_id)
+        return await project_api.service.repo_service.get_repository(project.repo_id)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

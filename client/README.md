@@ -1,16 +1,33 @@
-# React + Vite
+# Codesense Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The client is a React + Vite application that connects to the Codesense FastAPI backend.
 
-Currently, two official plugins are available:
+## Run locally
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+1. Open a terminal in `client/`
+2. Install dependencies:
 
-## React Compiler
+```powershell
+npm install
+```
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+3. Start the development server:
 
-## Expanding the ESLint configuration
+```powershell
+npm run dev
+```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+4. Open the browser at the URL shown by Vite (usually `http://localhost:5173`).
+
+## Features
+
+- Authentication and project dashboard
+- Repository ingestion form
+- Repository summary and diagram viewer
+- Interactive AI chatbot for repository questions
+
+## Notes
+
+- The client expects the API at `http://localhost:8000`
+- If you change the backend port, update `client/src/App.jsx` `API_BASE`
+- Mermaid diagrams are rendered using the installed `mermaid` package

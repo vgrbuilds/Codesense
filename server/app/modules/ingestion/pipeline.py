@@ -11,7 +11,7 @@ class IngestionPipeline:
     def __init__(self):
         self.splitter = RepoSplitter()
         self.embeddings = GoogleGenerativeAIEmbeddings(
-            model="models/text-embedding-004",
+            model="gemini-embedding-2",
             google_api_key=settings.GEMINI_API_KEY
         )
 
@@ -25,6 +25,11 @@ class IngestionPipeline:
         print("Chunking...")
         chunks = self.splitter.split(docs)
         print(f"  {len(chunks)} chunks created")
+
+        # Tag each chunk with the source repository URL so that later
+        # we can associate them with the correct repo record.
+        for chunk in chunks:
+            chunk.metadata["repo_url"] = repo_url
 
         # 3 - embed + store
         print("Embedding and storing...")

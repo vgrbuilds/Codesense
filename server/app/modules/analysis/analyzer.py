@@ -35,4 +35,25 @@ Codebase:
 Return only valid JSON, no markdown, no explanation.
 """
         response = self.llm.invoke(prompt)
-        return json.loads(response.content)
+        text = getattr(response, "content", "").strip()
+
+        # Robustly extract JSON block
+        start_idx = text.find("{")
+        end_idx = text.rfind("}")
+        if start_idx != -1 and end_idx != -1:
+            json_str = text[start_idx:end_idx + 1]
+        else:
+            json_str = text
+
+        try:
+            return json.loads(json_str)
+        except json.JSONDecodeError:
+            return {
+                "description": "Unable to generate a structured description.",
+                "summary": "The repository analysis could not be parsed cleanly.",
+                "technologies": [],
+                "setup_guide": "Review the repository files and run the project locally.",
+                "workflow_diagram": "flowchart TD\n  A[Start] --> B[Review code]",
+                "architecture_diagram": "flowchart TD\n  A[Client] --> B[Server]",
+                "er_diagram": "erDiagram\n  USER ||--o{ PROJECT : owns",
+            }
